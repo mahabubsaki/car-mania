@@ -3,7 +3,9 @@ import React from 'react';
 const Header = () => {
     return (
         <header>
-            <h1>This is header</h1>
+
+            <h1>navbar</h1>
+
         </header>
     );
 };

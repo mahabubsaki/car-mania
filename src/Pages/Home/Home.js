@@ -1,10 +1,13 @@
 import React from 'react';
-import Services from './Services/Services';
+import Cart from '../../Cart/Cart';
+import Cars from './Cars/Cars';
+
 
 const Home = () => {
     return (
         <div>
-            <Services></Services>
+            <Cart></Cart>
+            <Cars></Cars>
         </div>
     );
 };
