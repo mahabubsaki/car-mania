@@ -6,14 +6,13 @@ import { getAuth } from "firebase/auth";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyCZZPaXJvsqirbK_Y9sLOFhztumu8UsGAs",
-    authDomain: "car-mania-1276a.firebaseapp.com",
-    projectId: "car-mania-1276a",
-    storageBucket: "car-mania-1276a.appspot.com",
-    messagingSenderId: "1020782335583",
-    appId: "1:1020782335583:web:0b0b5fa9b7e51844126dea"
+    apiKey: "AIzaSyAdKrrpnWHMnCRM9KJ7C7z3Tw451CiG_Jc",
+    authDomain: "car-mania-57f00.firebaseapp.com",
+    projectId: "car-mania-57f00",
+    storageBucket: "car-mania-57f00.appspot.com",
+    messagingSenderId: "441152926277",
+    appId: "1:441152926277:web:5cf3a414d66ece7617692c"
 };
-
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app)

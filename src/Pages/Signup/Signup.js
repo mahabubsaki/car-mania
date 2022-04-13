@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faArrowRightFromBracket } from '@fortawesome/free-solid-svg-icons';
+import { createUserWithEmailAndPassword, FacebookAuthProvider, GithubAuthProvider, GoogleAuthProvider, sendEmailVerification, signInWithPopup } from 'firebase/auth';
+import auth from '../../firebase.init';
+import toast, { Toaster } from 'react-hot-toast';
 
 const Signup = () => {
     const [fullName, setFullName] = useState({ success: "", error: "" })
@@ -25,7 +30,7 @@ const Signup = () => {
     const [phone, setPhone] = useState({ success: "", error: "" })
     const handlePhone = (e) => {
         let userInput = e.target.value
-        if (userInput.split('')[0] !== '0' || userInput.split('')[1] !== '1' || userInput.length !== 11) {
+        if (userInput.split('')[0] !== '0' || userInput.split('')[1] !== '1' || userInput.length !== 11 || isNaN(Number(userInput))) {
             setPhone({ success: "", error: "Please enter a valid number" })
         }
         else {
@@ -40,6 +45,12 @@ const Signup = () => {
         }
         else {
             setPassword({ success: userInput, error: "" })
+        }
+        if (userInput !== confirmPassword.success) {
+            setConfirmPassword({ success: "", error: "Confirm password didn't match" });
+        }
+        else {
+            setConfirmPassword({ success: "", error: "" });
         }
     }
     const [confirmPassword, setConfirmPassword] = useState({ success: "", error: "" })
@@ -74,16 +85,60 @@ const Signup = () => {
             setAllOk(false)
         }
     }, [fullName.error, email.error, phone.error, password.error, confirmPassword.error, gender.error, termsChecked.error, fullName.success, email.success, phone.success, password.success, confirmPassword.success, gender.success, termsChecked.success])
+    const googleProvider = new GoogleAuthProvider();
+    const githubProvider = new GithubAuthProvider();
+    const facebookProvider = new FacebookAuthProvider();
+    const handleContinueWithGoogle = () => {
+        signInWithPopup(auth, googleProvider)
+            .then((result) => {
+                console.log(result.user)
+            }).catch((error) => {
+                console.log(error);
+            });
+    }
+    const handleContinueWithGithub = () => {
+        signInWithPopup(auth, githubProvider)
+            .then((result) => {
+                console.log(result.user)
+            }).catch((error) => {
+                console.log(error);
+            });
+    }
+    const handleContinueWithFacebook = () => {
+        signInWithPopup(auth, facebookProvider)
+            .then((result) => {
+                console.log(result.user)
+            }).catch((error) => {
+                console.log(error);
+            });
+    }
+    const navigate = useNavigate()
     const handleSubmit = (event) => {
         event.preventDefault();
-        console.log(allOk)
+        event.stopPropagation();
+        createUserWithEmailAndPassword(auth, email.success, password.success)
+            .then((result) => {
+                sendEmailVerification(auth.currentUser)
+                    .then(() => {
+                        toast.success(`An verification email has sent to your ${result.user.email}`)
+                        toast.success('Successfully signed up!')
+                        setTimeout(() => {
+                            navigate('/')
+                        }, 5000)
+                    });
+            })
+            .catch(() => {
+                toast.error('Email already in use');
+            })
+
     }
     return (
-        <div className="border border-black bg-stone-300 w-2/5 mx-auto py-4">
+        <div className="border border-black bg-stone-300 w-full sm:w-3/4 mx-auto py-4">
+            <Toaster />
             <h1 className="text-3xl text-center mb-2">Sign Up</h1>
             <form onSubmit={handleSubmit}>
                 <div className="flex justify-center">
-                    <div className="flex flex-col justify-around mr-4">
+                    <div className="flex flex-col justify-around mr-1 sm:mr-4">
                         <label htmlFor="fullname" className="mb-7 mt-4">Full Name</label>
                         <label htmlFor="email" className="mb-7">Email</label>
                         <label htmlFor="telephone" className="mb-7">Phone no</label>
@@ -155,8 +210,18 @@ const Signup = () => {
                     {allOk ? '' : 'Please Fill all the information for signing up'}
                 </p>
             </form>
+            <p className="text-2xl text-center mb-2">or</p>
+            <div className="flex justify-center mb-2">
+                <button className="bg-red-500 p-2" onClick={handleContinueWithGoogle}>Continue with Google <FontAwesomeIcon icon={faArrowRightFromBracket} className="ml-2 relative top-0" /></button>
+            </div>
+            <div className="flex justify-center mb-2">
+                <button className="bg-red-500 py-2 px-3" onClick={handleContinueWithGithub}>Continue with Github<FontAwesomeIcon icon={faArrowRightFromBracket} className="ml-2 relative top-0" /></button>
+            </div>
             <div className="flex justify-center">
-                <p>Already have an account?<Link to="/login" className='text-stone-600'>Login</Link></p>
+                <button className="bg-red-500 py-2 px-1" onClick={handleContinueWithFacebook}>Continue with Facebook<FontAwesomeIcon icon={faArrowRightFromBracket} className="ml-2 relative top-0" /></button>
+            </div>
+            <div className="flex justify-center text-xl">
+                <p>Already have an account? <Link to="/login" className='text-stone-600'>Login</Link></p>
             </div>
         </div>
     );

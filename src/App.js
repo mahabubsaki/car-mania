@@ -11,6 +11,7 @@ import Signup from "./Pages/Signup/Signup";
 import addToDb from "./utilities/addToDb";
 import getCart from "./utilities/getCart";
 import removeAll from "./utilities/removeAll";
+import RequireAuth from './RequireAuth/RequireAuth';
 export const CarContext = createContext()
 
 function App() {
@@ -39,7 +40,11 @@ function App() {
       <div className="App">
         <Header></Header>
         <Routes>
-          <Route path="/" element={<Home></Home>}></Route>
+          <Route path="/" element={
+            <RequireAuth>
+              <Home></Home>
+            </RequireAuth>
+          }></Route>
           <Route path="/login" element={<Login></Login>}></Route>
           <Route path="/signup" element={<Signup></Signup>}></Route>
         </Routes>
